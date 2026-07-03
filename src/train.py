@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from sklearn.model_selection import train_test_split
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import StandardScaler
-
+from sklearn.model_selection import cross_val_score
 from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.ensemble import RandomForestClassifier
@@ -20,7 +20,8 @@ from sklearn.metrics import (
     recall_score,
     f1_score,
     confusion_matrix,
-    ConfusionMatrixDisplay
+    ConfusionMatrixDisplay,
+    classification_report
 )
 
 from preprocess import (
@@ -48,6 +49,8 @@ def get_models():
 
         "Naive Bayes": GaussianNB()
     }
+
+
 
 
 def train_models():
@@ -141,6 +144,8 @@ def train_models():
 
     print(cm)
 
+
+
     disp = ConfusionMatrixDisplay(
         confusion_matrix=cm,
         display_labels=["Benign", "Malignant"]
@@ -151,6 +156,42 @@ def train_models():
     plt.title("Confusion Matrix")
 
     plt.show()
+
+    print("\n")
+    print("=" * 70)
+    print("Cross Validation")
+
+    scores = cross_val_score(
+        best_model,
+        X,
+        y,
+        cv=5,
+        scoring="accuracy"
+    )
+
+    print("Scores:", scores)
+    print("Average Accuracy:", scores.mean())
+
+    report = classification_report(
+        y_test,
+        best_predictions,
+        target_names=["Benign", "Malignant"]
+    )
+
+    print("\nClassification Report")
+    print(report)
+
+    reports_folder = (
+        Path(__file__).resolve().parent.parent
+        / "reports"
+    )
+
+    reports_folder.mkdir(exist_ok=True)
+
+    with open(reports_folder / "classification_report.txt", "w") as f:
+        f.write(report)
+
+    print("Classification report saved successfully.")
 
     # Save the best model
     models_folder = (
