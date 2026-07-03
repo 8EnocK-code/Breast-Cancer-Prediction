@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This project applies machine learning techniques to predict whether a breast tumor is **benign** or **malignant** using the Breast Cancer Wisconsin Diagnostic Dataset. The goal is to build a reliable classification model while following a structured data science workflow, from data preprocessing and exploration to model training, evaluation, and prediction.
+This project applies machine learning techniques to predict whether a breast tumor is **benign** or **malignant** using the Breast Cancer Wisconsin Diagnostic Dataset. The goal is to build a reliable classification model while following a structured data science workflow, from data preprocessing and exploration to  model training, evaluation, and prediction.
 
 This project was developed as part of my data science learning journey to strengthen my understanding of classification algorithms, model evaluation, and building reproducible machine learning pipelines.
 
