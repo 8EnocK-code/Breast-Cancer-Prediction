@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 
-from src.predict import load_model
+from src.predict import load_model, predict
 
 # --------------------------------------------------
 # PAGE CONFIG
@@ -20,7 +20,9 @@ model = load_model()
 # --------------------------------------------------
 
 st.title("🩺 Breast Cancer Prediction System")
-
+st.caption(
+    "Machine Learning Classification using the Breast Cancer Wisconsin Diagnostic Dataset"
+)
 st.markdown("""
 Predict whether a breast tumor is **Benign** or **Malignant**
 using a trained Machine Learning model.
@@ -53,9 +55,50 @@ after comparison.
 # --------------------------------------------------
 # INPUTS
 # --------------------------------------------------
+with st.expander("📘 How to Use This Application"):
 
+    st.markdown("""
+1. Enter the patient's measurements.
+
+2. Click **Predict**.
+
+3. Review the prediction and confidence score.
+
+4. Compare the probability of each diagnosis.
+
+**Reminder:** This application is intended for learning and demonstration purposes only.
+""")
+    
+with st.expander("ℹ️ About this Project"):
+
+    st.markdown("""
+### Project Overview
+
+This application predicts whether a breast tumor is **Benign** or **Malignant**
+using a trained Machine Learning model.
+
+### Workflow
+
+- Data Cleaning
+- Exploratory Data Analysis
+- Feature Scaling
+- Model Training
+- Model Evaluation
+- Prediction
+
+### Technologies Used
+
+- Python
+- Pandas
+- NumPy
+- Scikit-learn
+- Streamlit
+""")
 st.header("Patient Measurements")
 
+st.caption(
+    "Enter the patient's measurements below."
+)
 st.write(
     "Fill in all measurements below."
 )
@@ -305,17 +348,112 @@ patient_data = pd.DataFrame({
 })
 
 # --------------------------------------------------
-# PREDICT BUTTON (Coming in Version 2)
+# PREDICTION
 # --------------------------------------------------
+st.warning(
+    "Please ensure that all measurements are entered correctly before making a prediction."
+)
 
 st.divider()
 
-st.button(
-    "🔍 Predict",
-    disabled=True,
-    use_container_width=True
-)
+if st.button("🔍 Predict", use_container_width=True):
 
-st.info(
-    "Prediction functionality will be enabled in Version 2."
-)
+    prediction, probability = predict(model, patient_data)
+
+    diagnosis = "Malignant" if prediction == 1 else "Benign"
+
+    st.header("Prediction Results")
+
+    if diagnosis == "Benign":
+
+        st.success("## 🟢 Benign Tumor")
+
+        st.write("""
+    The model predicts that the tumor is **Benign**.
+
+    This indicates that the tumor is unlikely to be cancerous.
+
+    **Note:** This prediction is for educational purposes only and should not replace professional medical advice.
+    """)
+
+    else:
+
+        st.error("## 🔴 Malignant Tumor")
+
+        st.write("""
+    The model predicts that the tumor is **Malignant**.
+
+    This indicates that the tumor may be cancerous and requires further medical evaluation.
+
+    **Note:** This prediction is for educational purposes only and should not replace professional medical advice.
+    """)
+
+    if probability is not None:
+
+        confidence = max(probability) * 100
+
+        col1, col2 = st.columns(2)
+
+        with col1:
+
+            st.metric(
+                "Prediction",
+                diagnosis
+            )
+
+        with col2:
+
+            st.metric(
+                "Confidence",
+                f"{confidence:.2f}%"
+            )
+
+        st.progress(confidence / 100)
+
+        if confidence >= 90:
+
+            st.success("The model is highly confident in this prediction.")
+
+        elif confidence >= 75:
+
+            st.info("The model is reasonably confident in this prediction.")
+
+        else:
+
+            st.warning("The model has relatively low confidence in this prediction.")
+
+        st.caption(
+            "Higher confidence indicates that the model is more certain about its prediction."
+        )
+        probability_df = pd.DataFrame({
+
+            "Diagnosis": [
+                "Benign",
+                "Malignant"
+            ],
+
+            "Probability (%)": [
+                probability[0] * 100,
+                probability[1] * 100
+            ]
+
+        })
+
+        st.subheader("Prediction Probabilities")
+
+        st.dataframe(
+            probability_df.style.format({
+                "Probability (%)": "{:.2f}"
+            }),
+            use_container_width=True
+        )
+        st.divider()
+
+        st.caption(
+            "Built with ❤️ using Python, Scikit-learn and Streamlit."
+        )
+        st.divider()
+
+        st.caption(
+            "Developed by Enock Ombaso | Data Science Portfolio Project"
+        )

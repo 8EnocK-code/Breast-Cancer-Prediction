@@ -1,4 +1,33 @@
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Python cache
 __pycache__/
 *.py[cod]
-*.pkl
-.venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# VS Code
+.vscode/
+
+# Model checkpoints (optional)
+*.joblib
+
+# Logs
+*.log
+
+# Environment variables
+.env
+
+# Streamlit cache
+.streamlit/
+
+# Build files
+build/
+dist/
